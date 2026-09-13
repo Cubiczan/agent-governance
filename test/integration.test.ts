@@ -104,6 +104,8 @@ describe("gate -> signed ledger integration", () => {
       "PolicyValidationError",
       "LedgerLockError",
       "DEFAULT_AUDIT_LEDGER_KEY",
+      "confinePath",
+      "PathEscapeError",
       "AUDIT_LEDGER_KEY_ENV",
       "FinanceAnalysisGate",
       "defaultFinanceAnalysisPolicy",

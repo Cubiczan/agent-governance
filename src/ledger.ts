@@ -47,6 +47,7 @@ import {
   writeSync,
 } from "node:fs";
 import { dirname } from "node:path";
+import { confinePath } from "./safe-path.js";
 
 /**
  * The default signing key. Documented and safe ONLY for tests/dev. Kept
@@ -192,8 +193,9 @@ function parseLines(raw: string): AuditRecord[] {
 }
 
 function lastSigOnDisk(path: string): string {
-  if (!existsSync(path)) return "";
-  const records = parseLines(readFileSync(path, "utf-8"));
+  const safePath = confinePath(path);
+  if (!existsSync(safePath)) return "";
+  const records = parseLines(readFileSync(safePath, "utf-8"));
   return records.at(-1)?.sig ?? "";
 }
 
@@ -218,7 +220,7 @@ export class AuditLedger {
   private lastSig: string;
 
   constructor(options: AuditLedgerOptions) {
-    this.path = options.path;
+    this.path = confinePath(options.path);
     this.key = resolveKey(options.key);
     this.lock = options.lock ?? true;
     this.lockTimeoutMs = options.lockTimeoutMs ?? 2000;
@@ -331,7 +333,8 @@ export class AuditLedger {
  */
 export function verifyLedger(path: string, key?: string): VerifyResult {
   const resolvedKey = resolveKey(key);
-  const raw = existsSync(path) ? readFileSync(path, "utf-8") : "";
+  const safePath = confinePath(path);
+  const raw = existsSync(safePath) ? readFileSync(safePath, "utf-8") : "";
   const records = parseLines(raw);
 
   let prevSig = "";

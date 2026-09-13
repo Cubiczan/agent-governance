@@ -75,3 +75,5 @@ export {
   type SealedDraft,
   type RetainedEvidence,
 } from "./finance-analysis.js";
+
+export { confinePath, PathEscapeError } from "./safe-path.js";
